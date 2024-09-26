@@ -24,6 +24,11 @@ void real_matmul(
     real_t MatB[N][K];
     real_t MatC[M][K];
 
+#pragma HLS array_partition variable=MatA dim=2 factor=15 cyclic
+#pragma HLS array_partition variable=MatB dim=2 factor=15 cyclic
+#pragma HLS array_partition variable=MatC dim=2 factor=15 cyclic
+
+
     // Read in the data (Matrix A) from DRAM to BRAM
     MAT_A_ROWS:
     for(int i = 0; i < M; i++) {
@@ -54,12 +59,17 @@ void real_matmul(
     // Perform matrix multiplication 
     OUTER_ROWS:
     for(int i = 0; i < M; i++) {
+#pragma HLS pipeline
         OUTER_COLS:
         for(int j = 0; j < K; j++) {
-            
+#pragma HLS pipeline
             INNER_ROW_COL:
-            for(int p = 0; p < N; p++) {
-                MatC[i][j] += MatA[i][p] * MatB[p][j];
+            for(int p = 0; p < N; p+=15) {
+#pragma HLS pipeline
+                for(int pp = 0; pp < 15; pp++){
+#pragma HLS unroll
+                    MatC[i][j] += MatA[i][p+pp] * MatB[p+pp][j];
+                }
             }
 
         }
