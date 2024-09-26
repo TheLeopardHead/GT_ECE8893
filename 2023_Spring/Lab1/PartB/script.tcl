@@ -1,4 +1,4 @@
-open_project complex_proj
+open_project vitis_hls_complex_mul
 
 # this is your top module 
 set_top complex_matmul
@@ -11,9 +11,13 @@ add_files -tb main.cpp
 
 open_solution "solution1"
 
+# Set board to Pynq-Z2
 set_part {xc7z020clg400-1}
 
 create_clock -period 10 -name default
+
+## C simulation
+csim_design -O -clean
 
 # synthesis
 csynth_design

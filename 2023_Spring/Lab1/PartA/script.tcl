@@ -1,4 +1,4 @@
-open_project real_proj
+open_project vitis_hls_real_mul
 
 # this is your top module 
 set_top real_matmul
@@ -15,6 +15,9 @@ open_solution "solution1"
 set_part {xc7z020clg400-1}
 
 create_clock -period 10 -name default
+
+## C simulation
+csim_design -O -clean
 
 # synthesis
 csynth_design

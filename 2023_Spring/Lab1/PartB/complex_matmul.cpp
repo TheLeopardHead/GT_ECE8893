@@ -48,7 +48,8 @@ void complex_matmul(
     for(int i = 0; i < M; i++) {
         MAT_C_COLS_INIT:
         for(int j = 0; j < K; j++) {
-            MatC[i][j] = 0;
+            MatC[i][j].real = 0;
+            MatC[i][j].imag = 0;
         }
     }
 
@@ -61,8 +62,8 @@ void complex_matmul(
             temp.imag = 0;
             INNER_ROW_COL:
             for(int p = 0; p < N; p++) {
-                int_t real_part = MatA.real * MatB.real - MatA.imag * MatB.imag;
-                int_t imag_part = MatA.real * MatB.imag + MatA.imag * MatB.real;
+                int_t real_part = MatA[i][p].real * MatB[p][j].real - MatA[i][p].imag * MatB[p][j].imag;
+                int_t imag_part = MatA[i][p].real * MatB[p][j].imag + MatA[i][p].imag * MatB[p][j].real;
                 temp.real += real_part;
                 temp.imag += imag_part;
             }
