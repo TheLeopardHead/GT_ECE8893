@@ -9,7 +9,7 @@ add_files complex_matmul.cpp
 # this is your testbench (specified by -tb option)
 add_files -tb main.cpp
 
-open_solution "solution1"
+open_solution "solution2"
 
 # Set board to Pynq-Z2
 set_part {xc7z020clg400-1}
