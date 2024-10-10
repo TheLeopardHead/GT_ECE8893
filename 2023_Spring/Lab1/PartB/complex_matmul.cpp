@@ -66,34 +66,20 @@ void complex_matmul(
     for(int i = 0; i < M; i++) {
         OUTER_COLS:
         for(int p = 0; p < N; p++) {
-            // #pragma HLS pipeline
             temp.real = 0;
             temp.imag = 0;
-            #pragma HLS pipeline II=5
+            #pragma HLS pipeline
             INNER_ROW_COL:
-            for(int j = 0; j < K; j++) {
-                int_t real_part = 0;
-                int_t imag_part = 0;
-                for(int jj = 0; jj < 3; jj++){
-                    if(jj == 0) {
-                        real_part = MatA[i][p].real * MatB[p][j].real;
-                        imag_part = MatA[i][p].real * MatB[p][j].imag;
-                    }
-                    else if(jj == 1) {
-                        real_part -= MatA[i][p].imag * MatB[p][j].imag;
-                        imag_part -= MatA[i][p].imag * MatB[p][j].real;
-                    }
-                    else if(jj == 2) {
-                        temp.real += real_part;
-                        temp.imag += imag_part;
-                        MatC[i][j] = temp;
-                    }
+            for(int j = 0; j < 2*K; j++) {
+                if(j % 2 ==0){
+                int_t real_part = MatA[i][p].real * MatB[p][j/2].real - MatA[i][p].imag * MatB[p][j/2].imag;
+                temp.real += real_part;
                 }
-                // int_t real_part = MatA[i][p].real * MatB[p][j].real - MatA[i][p].imag * MatB[p][j].imag;
-                // int_t imag_part = MatA[i][p].real * MatB[p][j].imag + MatA[i][p].imag * MatB[p][j].real;
-                // temp.real += real_part;
-                // temp.imag += imag_part;
-                // MatC[i][j] = temp;
+                else {
+                int_t imag_part = MatA[i][p].real * MatB[p][j/2].imag + MatA[i][p].imag * MatB[p][j/2].real;
+                temp.imag += imag_part;
+                }
+                MatC[i][j/2] = temp;
             }
         }
     }
